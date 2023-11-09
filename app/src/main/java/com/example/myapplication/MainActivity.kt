@@ -2,6 +2,8 @@ package com.example.myapplication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,18 +30,20 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val posts: List<Post>? = response.body()
                     if (posts != null) {
-                        for (post in posts) {
-                            val title = post.title
-                            println("Título: $title")
-                        }
+                        val myAdapter = MyAdapter(posts)
+                        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+                        recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+                        recyclerView.adapter = myAdapter
+                        myAdapter.notifyDataSetChanged()
                     }
                 } else {
-                    // Manejar el error de respuesta
+                    println("Error de respuesta: ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<List<Post>>, t: Throwable) {
                 // Manejar el error de la solicitud
+                println("Error de solicitud: ${t.message}")
             }
         })
 
